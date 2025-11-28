@@ -153,9 +153,6 @@ def tfidf_keywords(ruta_keywords:str,vocabulario:set[str],idf:dict[int,float])->
             vectores[idx]=tfidf_normalizado
     return vectores 
 
-
-
-
 """
 Seccion 2.2 punto 1
 Llamada de funciones de limpieza de datos
