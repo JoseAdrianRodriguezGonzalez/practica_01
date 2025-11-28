@@ -3,6 +3,7 @@ from os import read
 import re
 import pandas as pd
 import nltk
+import math 
 from nltk.corpus import stopwords
 nltk.download("stopwords")
 data_path="data.txt"
@@ -53,11 +54,13 @@ def juntar_topicos(diccionario:dict[int,str],diccionario_labels:dict[int,str])->
 def get_frecuencias(diccionario_completo:dict[str,list[str]])->dict[str,dict[str,int]]:
     diccionario_por_topico={}
     for keys,items in diccionario_completo.items():
-        diccionario_frecuencias={}
-        for palabra in items:
-            diccionario_frecuencias[palabra]=diccionario_frecuencias.get(palabra,0)+1
-        diccionario_por_topico[keys]=diccionario_frecuencias
+        diccionario_por_topico[keys]=frecuencias(items)
     return diccionario_por_topico
+def frecuencias(palabras:list[str])->dict[str,int]:
+    diccionario_frecuencias={}
+    for palabra in palabras:
+        diccionario_frecuencias[palabra]=diccionario_frecuencias.get(palabra,0)+1
+    return diccionario_frecuencias
 def sort_frecuencias(diccionario_completo:dict[str,dict[str,int]])->dict[str,list[tuple[int,str]]]:
     diccionario_topico={}
     for keys,items in diccionario_completo.items():
@@ -77,8 +80,63 @@ def write_txt(diccionario:dict[str,list[tuple[int,str]]],cantidad:int):
         with open("labels_kw.txt","w",encoding="utf-8") as file:
             for label in labels:
                 file.write(f"{label}\n")
-
-        
+"""
+Sección 2.3 punto 1 
+DEclarion de funciones
+"""
+def tf(diccionario:dict[int,str],vocabulario:set[str])->dict[int,dict[int,int]]:
+    diccionario_tf={}
+    #ordenar vocabulario y guardarlo en un diccionario 
+    vocab_list=sorted(vocabulario)
+    diccionario_vocabulario={palabra:idx for idx,palabra in enumerate(vocab_list)}
+    #Dividir el string en lista de palabras 
+    diccionario_spliteado={indice:concepto.split() for indice,concepto in diccionario.items()}
+    #Busca la freceuncia de las palabras del vocabulario en cada conecpto 
+    for key,palabras in diccionario_spliteado.items():
+        diccionario_frecuencias={}
+        for palabra in palabras:
+            idx=diccionario_vocabulario[palabra]
+            diccionario_frecuencias[idx]=diccionario_frecuencias.get(idx,0)+1 
+        diccionario_tf[key]=diccionario_frecuencias
+    return diccionario_tf
+def idf(diccionario:dict[int,str],vocabulario:set[str])->dict[int,float]:
+    diccionario_idf={}
+    #ordenar vocabulario y guardarlo en un diccioanrio 
+    vocab_list=sorted(vocabulario)
+    diccionario_vocabulario={palabra:idx for idx,palabra in enumerate(vocab_list)}
+    #Dividir el string en lsita d epalabras 
+    diccionario_spliteado={indice:concepto.split() for indice,concepto in diccionario.items()}
+    n=len(diccionario_spliteado)
+    #buscar la frecuencia de cadapalabra por documento, es decir, en cuantos documentos aparacio 
+    frecuencias_documento={i:0 for i in range(len(vocab_list))}
+    for palabras in diccionario_spliteado.values():
+        palabras_unicas=set(palabras)
+        for palabra in palabras_unicas:
+            idx=diccionario_vocabulario[palabra]
+            frecuencias_documento[idx]+=1 
+    diccionario_idf={palabra:math.log(n/frecuencia) for palabra,frecuencia in frecuencias_documento.items()}
+    return diccionario_idf
+    
+def getVocabulary(diccionario:dict[int,str])->set[str]:
+    diccionario_div={}
+    for keys,values in diccionario.items():
+        diccionario_div[keys]=values.split()
+    conjunto=set()
+    for keys,values in diccionario_div.items():
+        conjunto=conjunto.union(set(values))
+    return conjunto 
+def TF_IDF(tf:dict[int,dict[int,int]],idf:dict[int,float])->dict[int,dict[int,float]]:
+    TFIDF_d={i:{} for i in tf}
+    for documento,frecuencia in tf.items():
+        TFIDF_d[documento]={palabra:freq*idf[palabra] for palabra,freq in frecuencia.items() }
+    return TFIDF_d 
+def norm_l2(vector:dict[int,float])->float:
+    return (sum(v**2 for v in vector.values()))**0.5
+def vector_normal(vector:dict[int,float])->dict[int,float]:
+    norma=norm_l2(vector)
+    return {indice:v/norma for indice,v in vector.items()}
+def normalizar(tfidf:dict[int,dict[int,float]])->dict[int,dict[int,float]]:
+    return {indice:vector_normal(documento) for indice,documento in tfidf.items()}
 """
 Seccion 2.2 punto 1
 Llamada de funciones de limpieza de datos
@@ -100,3 +158,15 @@ diccionario_topicos=juntar_topicos(diccionario_procesado,diccionario_labels)
 diccionario_frecuencias=get_frecuencias(diccionario_topicos)
 diccionario_frecuencias_ordenadas=sort_frecuencias(diccionario_frecuencias)
 write_txt(diccionario_frecuencias_ordenadas,60)
+
+"""
+Sección 2.3 punto 1 
+llamada de funciones 
+"""
+#VOy a utilizar los diccionarios de la svariables 103 y 102
+vocabulario=getVocabulary(diccionario_procesado)
+diccionario_tf=tf(diccionario_procesado,vocabulario)
+diccionario_idf=idf(diccionario_procesado,vocabulario)
+diccionario_vectores_TFIDF=TF_IDF(diccionario_tf,diccionario_idf)
+diccionario_vectores_TFIDF_normalizado=normalizar(diccionario_vectores_TFIDF)
+print(diccionario_vectores_TFIDF_normalizado)
