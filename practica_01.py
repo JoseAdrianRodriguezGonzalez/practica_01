@@ -43,10 +43,6 @@ def guardar_resultado(diccionario:dict[int,list[str]],nombre:str):
 """
 Seccion 2.2 punto 2
 """
-<<<<<<< HEAD
-=======
-######################################
->>>>>>> 4b71da756c98d42a0a52f32c6464e577ba927fd6
 def juntar_topicos(diccionario:dict[int,str],diccionario_labels:dict[int,str])->dict[str,list[str]]:
     diccionario_vocabulario={}
     for keys,items in diccionario.items():
@@ -85,7 +81,7 @@ def write_txt(diccionario:dict[str,list[tuple[int,str]]],cantidad:int):
                 file.write(f"{label}\n")
 """
 Sección 2.3 punto 1 
-DEclarion de funciones
+Declarion de funciones
 """
 def tf(diccionario:dict[int,str],vocabulario:set[str])->dict[int,dict[int,int]]:
     diccionario_tf={}
@@ -94,7 +90,7 @@ def tf(diccionario:dict[int,str],vocabulario:set[str])->dict[int,dict[int,int]]:
     diccionario_vocabulario={palabra:idx for idx,palabra in enumerate(vocab_list)}
     #Dividir el string en lista de palabras 
     diccionario_spliteado={indice:concepto.split() for indice,concepto in diccionario.items()}
-    #Busca la freceuncia de las palabras del vocabulario en cada conecpto 
+    #Busca la frecuencia de las palabras del vocabulario en cada conecpto 
     for key,palabras in diccionario_spliteado.items():
         diccionario_frecuencias={}
         for palabra in palabras:
@@ -107,17 +103,10 @@ def idf(diccionario:dict[int,str],vocabulario:set[str])->dict[int,float]:
     #ordenar vocabulario y guardarlo en un diccioanrio 
     vocab_list=sorted(list(vocabulario))
     diccionario_vocabulario={palabra:idx for idx,palabra in enumerate(vocab_list)}
-<<<<<<< HEAD
-    #Dividir el string en lsita de palabras 
-    diccionario_spliteado={indice:concepto.split() for indice,concepto in diccionario.items()}
-    n=len(diccionario_spliteado)
-    #buscar la frecuencia de cada palabra por documento, es decir, en cuantos documentos aparacio 
-=======
-    #Dividir el string en lsita d epalabras 
+    #Dividir el string en lista de palabras 
     diccionario_spliteado={indice:concepto.split() for indice,concepto in diccionario.items()}
     n=len(diccionario_spliteado)
     #buscar la frecuencia de cadapalabra por documento, es decir, en cuantos documentos aparacio 
->>>>>>> 4b71da756c98d42a0a52f32c6464e577ba927fd6
     frecuencias_documento={i:0 for i in range(len(vocab_list))}
     for palabras in diccionario_spliteado.values():
         palabras_unicas=set(palabras)
@@ -149,7 +138,7 @@ def normalizar(tfidf:dict[int,dict[int,float]])->dict[int,dict[int,float]]:
     return {indice:vector_normal(documento) for indice,documento in tfidf.items()}
 """
 Seccion 2.3 punto 2 
-funciones 
+Declarion de funciones
 """
 def tfidf_keywords(ruta_keywords:str,vocabulario:set[str],idf:dict[int,float])->dict[int,dict[int,float]]:
     lista_vocabulario=sorted(list(vocabulario))
@@ -165,7 +154,7 @@ def tfidf_keywords(ruta_keywords:str,vocabulario:set[str],idf:dict[int,float])->
 
 """
 Seccion 2.3 punto 3
-Funciones 
+Declarion de funciones
 """
 def similitud_coseno(u1:dict[int,float],u2:dict[int,float])->float:
     keys=set(u1).intersection(set(u2))
@@ -188,7 +177,7 @@ def ordernar_tuplas(distancias_por_tuplas:dict[int,dict[int,float]])->dict[int,l
     return guardar_resultado 
 """
 Seccion 2.3 punto 4
-
+Declarion de funciones
 """
 def escribir(distancias_tuplas:dict[int,list[tuple[float,int]]],cantidad:int):
     with open("labels.txt","r",encoding="utf-8") as file:
@@ -205,7 +194,7 @@ def escribir(distancias_tuplas:dict[int,list[tuple[float,int]]],cantidad:int):
             texto=f"{tuplas_texto[tupla]}; {labels_tuplas[tupla]}; {distancias_cercanas}; {topicos_documento}\n"
             file.write(texto)
 """Seccion 2.4 punto
-FUnciones 
+Declarion de funciones
 """ 
 
 def precision_recall(resultados: str)->tuple[list[float],list[float]]:
@@ -245,10 +234,6 @@ documentos_sin_acentos=quitar_acentos(documento_sin_palabras_vacias)
 guardar_resultado(documentos_sin_acentos,"data_processed.txt")
 """
 2.2 punto 2
-<<<<<<< HEAD
-Llamadas a las funciones 
-=======
->>>>>>> 4b71da756c98d42a0a52f32c6464e577ba927fd6
 """
 data_processed="data_processed.txt"
 labels="labels.txt"
@@ -263,11 +248,7 @@ write_txt(diccionario_frecuencias_ordenadas,60)
 Sección 2.3 punto 1 
 llamada de funciones 
 """
-<<<<<<< HEAD
-#utilizamos el diccionarios de las variables 103 y 102
-=======
-#VOy a utilizar los diccionarios de la svariables 103 y 102
->>>>>>> 4b71da756c98d42a0a52f32c6464e577ba927fd6
+#Utilizamos los diccionarios
 vocabulario=getVocabulary(diccionario_procesado)
 diccionario_tf=tf(diccionario_procesado,vocabulario)
 diccionario_idf=idf(diccionario_procesado,vocabulario)
@@ -281,28 +262,15 @@ llamada de funciones
 matriz_tfidf_tuplas=tfidf_keywords("keywords.txt",vocabulario,diccionario_idf)
 """
 Seccion 2.3 punto 3
-<<<<<<< HEAD
-Llamada a las funciones 
-=======
 llamadas  
->>>>>>> 4b71da756c98d42a0a52f32c6464e577ba927fd6
 """
 diccionario_tuplas_distancias=tuplas_documentos_coseno(diccionario_vectores_TFIDF_normalizado,matriz_tfidf_tuplas)
 diccionario_tuplas_cercanas=ordernar_tuplas(diccionario_tuplas_distancias)
 escribir(diccionario_tuplas_cercanas,5)
-<<<<<<< HEAD
 
-"""Seccion 2.4 punto
-Llamada a las funciones 
+"""Seccion 2.4 punto 1
+Funciones 
 """
 precision_l,sensibilidad_l=precision_recall("results.txt")
 print(f"El promedio de la metrica de precision: {sum(precision_l)/len(precision_l)}")
 print(f"El promedio de la metrica de recall: {sum(sensibilidad_l)/len(sensibilidad_l)}")
-=======
-"""Seccion 2.4 punto
-FUnciones 
-"""
-precision_l,sensibilidad_l=precision_recall("results.txt")
-print(f"El promedio de la metrica de precision: {sum(precision_l)/len(precision_l)}")
-print(f"El promedio de la metrica de recall: {sum(sensibilidad_l)/len(sensibilidad_l)}")
->>>>>>> 4b71da756c98d42a0a52f32c6464e577ba927fd6
